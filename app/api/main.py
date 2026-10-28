@@ -14,7 +14,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from api.routers import advisor, agent, health, impact, plants, recommendations, signals
+from api.routers import agent, health, impact, plants, recommendations, signals
 from db.base import create_all_tables
 from shared.config import get_settings
 from shared.logger import get_logger, setup_logging
@@ -288,6 +288,5 @@ app.include_router(health.router, tags=["Health"])
 app.include_router(plants.router, prefix="/api/v1")
 app.include_router(signals.router, prefix="/api/v1")
 app.include_router(recommendations.router, prefix="/api/v1")
-app.include_router(advisor.router, prefix="/api/v1")
 app.include_router(agent.router, prefix="/api/v1")
 app.include_router(impact.router, prefix="/api/v1")

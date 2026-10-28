@@ -4,7 +4,6 @@ from __future__ import annotations
 from typing import Any
 
 from pydantic import BaseModel, Field
-from typing_extensions import Literal
 
 
 class CompanyCreate(BaseModel):
@@ -24,7 +23,6 @@ class PlantCreate(BaseModel):
     contract_demand_kva: float = 0.0
     tariff_category: str = "HT-Industrial"
     notes: str = ""
-
 
 class PowerSourceCreate(BaseModel):
     source_type: str = Field(
@@ -63,13 +61,3 @@ class FlexLoadCreate(BaseModel):
     notes: str = ""
 
 
-class AdvisorMessage(BaseModel):
-    role: Literal["user", "assistant"]
-    content: str = Field(..., min_length=1, max_length=4000)
-
-
-class AdvisorRequest(BaseModel):
-    question: str = Field(..., min_length=1, max_length=4000, description="Question for the GridSync AI advisor")
-    plant_id: int | None = Field(None, description="Plant context (optional)")
-    session_id: str | None = Field(None, max_length=64)
-    history: list[AdvisorMessage] = Field(default_factory=list, max_length=10)
