@@ -1,4 +1,4 @@
-"""SQLAlchemy async engine + session factory (PostgreSQL / asyncpg)."""
+"""SQLAlchemy async engine + session factory (SQLite / aiosqlite)."""
 from __future__ import annotations
 
 from contextlib import asynccontextmanager
@@ -16,7 +16,16 @@ from shared.config import get_settings
 
 def _make_engine():
     s = get_settings()
-    return create_async_engine(s.database_url, echo=False, pool_pre_ping=True)
+    # SQLite requires check_same_thread=False and no pool for async
+    connect_args = {}
+    if s.database_url.startswith("sqlite"):
+        connect_args = {"check_same_thread": False}
+    return create_async_engine(
+        s.database_url,
+        echo=False,
+        pool_pre_ping=True,
+        connect_args=connect_args,
+    )
 
 
 engine = _make_engine()
@@ -28,8 +37,7 @@ class Base(DeclarativeBase):
 
 
 async def create_all_tables() -> None:
-    """Create all ORM tables if they don't exist. Prefer Alembic in production —
-    run `alembic upgrade head` as a pre-deploy step. Kept for local dev only."""
+    """Create all ORM tables. Called at startup for SQLite dev setup."""
     import db.models  # noqa: F401  (register metadata on Base)
 
     async with engine.begin() as conn:

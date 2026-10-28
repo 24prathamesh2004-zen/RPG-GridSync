@@ -1,22 +1,17 @@
-"""Human-in-the-loop node — pauses the graph for manual review."""
+"""Human-in-the-loop node — GridSync uses approval via the recommendations API.
+
+The LangGraph human-in-the-loop pattern is not used directly in the advisor flow.
+Recommendation approval/rejection is handled via the /recommendations/{id}/approve
+and /recommendations/{id}/reject REST endpoints, which are the plant engineer's
+approval interface.
+
+This file is kept for future extension if async approval notifications are needed.
+"""
 from __future__ import annotations
 
 from agents.state import AgentState
 
 
 def human_review_node(state: AgentState) -> AgentState:
-    """Mark the session as escalated so it surfaces in the review queue."""
-    state["current_step"] = "human_review"
-    state["step_status"] = "escalated"
-    reason = state.get("human_review_reason", "manual_review_requested")
-    state.setdefault("messages", []).append(
-        {
-            "role": "assistant",
-            "agent": "human_review",
-            "content": (
-                "This case has been routed to a specialist for review "
-                f"(reason: {reason}). You'll be notified once a decision is made."
-            ),
-        }
-    )
+    """Placeholder — not used in current GridSync flow."""
     return state

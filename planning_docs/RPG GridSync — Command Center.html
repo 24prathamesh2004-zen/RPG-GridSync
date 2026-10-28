@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light">
+<title>RPG GridSync — Command Center</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<style>
+:root{--bg:#f3f6fa;--pn:#fff;--ink:#0f1f38;--mu:#5d7088;--ln:#e3e9f1;--so:#eef3f9;--te:#0f8b8d;--tb:#dff3f2;--am:#d99a00;--ab:#fdf3d6;--gr:#2f9e5f;--gb:#e1f4e8;--rd:#c0392b;--rb:#fbe5e2;--bl:#2b6cb0;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:radial-gradient(1000px 380px at 80% -100px,#cfeeee,transparent 65%),var(--bg);color:var(--ink);font:14px/1.5 "Plus Jakarta Sans","Segoe UI",system-ui,sans-serif;display:flex;min-height:100vh}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:#fff;z-index:60}
+aside{width:228px;background:var(--pn);border-right:1px solid var(--ln);padding:18px 12px;display:flex;flex-direction:column;gap:3px;position:sticky;top:0;height:100vh;flex-shrink:0}
+.brand{display:flex;gap:10px;align-items:center;font-weight:800;font-size:16px;padding:0 8px 16px}.brand small{display:block;font-weight:500;color:var(--mu);font-size:11px;margin-top:-3px}
+.mk{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,var(--te),var(--bl));display:grid;place-items:center;color:#fff;font-weight:800}
+.nv{display:flex;gap:10px;align-items:center;border:0;background:none;color:var(--mu);padding:10px;border-radius:10px;font:inherit;font-weight:600;cursor:pointer;text-align:left}
+.nv:hover{background:var(--so)}.nv[aria-current]{background:var(--ink);color:#fff}.nl{font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--mu);padding:12px 10px 4px;font-weight:700}
+.org{margin-top:auto;padding:10px;border-top:1px solid var(--ln);font-size:12px;color:var(--mu)}
+button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid var(--te);outline-offset:2px}
+.wrap{flex:1;min-width:0}
+.top{display:flex;flex-wrap:wrap;gap:10px;align-items:center;padding:12px 26px;background:rgba(255,255,255,.88);backdrop-filter:blur(10px);border-bottom:1px solid var(--ln);position:sticky;top:env(safe-area-inset-top,0px);z-index:20}
+.top h1{margin:0;font-size:19px;font-weight:800;flex:1;min-width:200px}.top h1 small{display:block;font-size:12px;font-weight:500;color:var(--mu)}
+.bc{font-size:12px;color:var(--mu);font-weight:600}.bc a{color:var(--te);cursor:pointer}
+.pill{display:inline-flex;gap:6px;align-items:center;padding:4px 10px;border-radius:99px;background:var(--so);font-size:12px;font-weight:700;color:var(--mu)}
+.live{background:var(--gb);color:var(--gr)}.live::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--gr)}
+select{font:inherit;font-weight:600;border:1px solid var(--ln);background:#fff;border-radius:10px;padding:6px 10px;color:var(--ink)}
+main{padding:20px 26px 40px;max-width:1340px}section[hidden]{display:none}
+.grid{display:grid;gap:14px}.g4{grid-template-columns:repeat(4,1fr)}.g5{grid-template-columns:repeat(5,1fr)}.g2{grid-template-columns:1.6fr 1fr}.g3{grid-template-columns:repeat(3,1fr)}.mt{margin-top:14px}
+.card{background:var(--pn);border:1px solid var(--ln);border-radius:16px;padding:16px;min-width:0;box-shadow:0 1px 2px rgba(15,31,56,.04)}
+.card h2{margin:0 0 2px;font-size:14px;font-weight:800}.sub{color:var(--mu);font-size:12px;margin:0 0 10px}
+.kpi{position:relative;overflow:hidden}.kpi::after{content:"";position:absolute;right:-20px;top:-20px;width:80px;height:80px;border-radius:50%;background:var(--tb)}
+.kpi b{display:block;font-size:23px;font-weight:800;letter-spacing:-.02em;position:relative}.kpi span{font-size:12px;color:var(--mu);font-weight:600;position:relative}.kpi i{font-style:normal;font-size:12px;color:var(--gr);font-weight:700;position:relative}
+.hero{background:linear-gradient(120deg,#0f1f38,#14506b 60%,#0f8b8d);color:#fff;border:0}.hero .sub{color:#bcd6e2}.hero h2{font-size:16px}
+.rg{margin:22px 0 8px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}.rg h3{margin:0;font-size:15px;font-weight:800}
+.pl{display:grid;grid-template-columns:repeat(auto-fill,minmax(255px,1fr));gap:12px}
+.pb{all:unset;box-sizing:border-box;cursor:pointer;background:var(--pn);border:1px solid var(--ln);border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:8px;transition:.15s}
+.pb:hover{transform:translateY(-2px);box-shadow:0 8px 22px rgba(15,31,56,.1);border-color:var(--te)}.pb:focus-visible{outline:2px solid var(--te);outline-offset:2px}.pb.best{border-color:var(--te);box-shadow:0 0 0 2px var(--tb)}
+.nm{font-weight:800;font-size:15px;display:flex;justify-content:space-between;gap:6px}.fw{display:flex;gap:6px;flex-wrap:wrap}
+.tag{font-size:11px;font-weight:700;padding:2px 8px;border-radius:99px;background:var(--so);color:var(--mu);white-space:nowrap}.tag.g{background:var(--gb);color:var(--gr)}.tag.a{background:var(--ab);color:#8a6100}.tag.r{background:var(--rb);color:var(--rd)}.tag.t{background:var(--tb);color:var(--te)}.tag.d{background:var(--ink);color:#fff}
+.row3{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}.row3 div{background:var(--so);border-radius:10px;padding:6px 8px}.row3 b{display:block;font-size:14px}.row3 span{font-size:10.5px;color:var(--mu);font-weight:600}
+table{width:100%;border-collapse:collapse;font-size:13px}th{font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--mu);text-align:left;padding:8px;border-bottom:1px solid var(--ln);white-space:nowrap}td{padding:9px 8px;border-bottom:1px solid var(--so)}tr.cl{cursor:pointer}tr.cl:hover td,tr.hi td{background:var(--tb)}.sc{overflow-x:auto}
+.btn{border:0;border-radius:10px;padding:7px 12px;font:inherit;font-weight:700;font-size:12px;cursor:pointer;background:var(--te);color:#fff}.btn.o{background:var(--so);color:var(--ink)}.btn.dn{background:var(--gb);color:var(--gr);cursor:default}
+.ov{position:fixed;inset:0;background:rgba(15,31,56,.4);z-index:50;display:none}.ov.on{display:block}
+.dr{position:fixed;top:0;right:0;bottom:0;width:min(640px,100%);background:var(--bg);z-index:55;padding:calc(18px + env(safe-area-inset-top,0px)) 20px 24px;overflow:auto;transform:translateX(105%);transition:.25s;box-shadow:-10px 0 40px rgba(15,31,56,.2)}.dr.on{transform:none}
+.dr h2{font-size:20px;margin:0}.x{float:right;border:1px solid var(--ln);background:#fff;border-radius:10px;width:34px;height:34px;font-size:18px;cursor:pointer}
+.lg{display:flex;gap:14px;font-size:11.5px;color:var(--mu);font-weight:600;flex-wrap:wrap;margin-top:6px}.lg i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+svg{display:block;width:100%;height:auto}
+.hz{display:grid;grid-template-columns:38px repeat(24,minmax(20px,1fr));gap:2px;min-width:640px;font-size:10px;color:var(--mu);font-weight:700;align-items:center}
+.hc{height:24px;border-radius:5px;border:0;cursor:pointer;padding:0}.hc:hover{transform:scale(1.25);z-index:2;position:relative}.t0{background:#43b581}.t1{background:#f3c969}.t2{background:#e8776b}.hc.nw{box-shadow:inset 0 0 0 2px #0f1f38}.hc.sl{outline:3px solid var(--bl);outline-offset:1px;z-index:3;position:relative}
+.hz span.hr{text-align:center}input[type=range]{width:100%;accent-color:var(--te)}
+@media(max-width:900px){body{flex-direction:column}aside{width:100%;height:auto;position:static;flex-direction:row;overflow-x:auto;padding:10px}.brand,.org,.nl{display:none}.nv{white-space:nowrap}.g4,.g5{grid-template-columns:1fr 1fr}.g2,.g3{grid-template-columns:1fr}main{padding:16px}.top{padding:12px 16px}}
+</style>
+</head>
+<body>
+<aside>
+  <div class="brand"><div class="mk">G</div><div>RPG GridSync<small>Command Center</small></div></div>
+  <div class="nl">Monitor</div>
+  <button class="nv" data-v="ov">◎ Overview</button>
+  <button class="nv" data-v="pl">▦ RPG Plants</button>
+  <button class="nv" data-v="sp">⚡ Supplier Plants</button>
+  <div class="nl">Analyse</div>
+  <button class="nv" data-v="fq">∿ Frequency</button>
+  <button class="nv" data-v="mt">▤ Meter Readings</button>
+  <div class="nl">Act</div>
+  <button class="nv" data-v="sc">☰ Schedule</button>
+  <div class="org">RPG Group · Procurement<br>Day-ahead plan · <span id="pd"></span><br>96 blocks × 15 min</div>
+</aside>
+<div class="wrap">
+  <div class="top">
+    <h1><span class="bc" id="bc"></span><span id="ttl">Overview</span><small id="stl"></small></h1>
+    <select id="co" aria-label="Company"><option value="">All companies</option><option>CEAT</option><option>KEC</option></select>
+    <select id="mode" aria-label="Mode"><option>Advisory mode</option><option>Automated mode</option></select>
+    <span class="pill">Grid <b id="gf"></b></span><span class="pill live">Live feed</span>
+  </div>
+  <main>
+    <section id="ov"></section><section id="pl" hidden></section><section id="pdv" hidden></section><section id="sp" hidden></section><section id="fq" hidden></section><section id="mt" hidden></section><section id="sc" hidden></section>
+  </main>
+</div>
+<div class="ov" id="ovl"></div>
+<div class="dr" id="dr" role="dialog" aria-label="Detail"></div>
+<script>
+const $=s=>document.querySelector(s),F=n=>Math.round(n).toLocaleString("en-IN"),rs=n=>"₹"+F(n);
+const rn=i=>{const x=Math.sin(i*12.9898+7.1)*43758.5453;return x-Math.floor(x)};
+const MU=[.82,.8,.8,.82,.85,.92,1.02,1.1,1.05,.92,.82,.78,.76,.76,.78,.84,.98,1.25,1.4,1.38,1.3,1.15,1,.9];
+const CM=[1.05,1.07,1.08,1.08,1.06,1,.92,.85,.76,.68,.62,.58,.57,.6,.66,.76,.9,1.08,1.18,1.2,1.16,1.12,1.09,1.06];
+const hh=h=>String(h%24).padStart(2,"0")+":00",bt=b=>String(b>>2).padStart(2,"0")+":"+String((b&3)*15).padStart(2,"0");
+const GFb=b=>50+.035*Math.sin(b/7)+.02*Math.sin(b/2.3)+(rn(b)-.5)*.02,GF=49.99;
+const ist=new Date(new Date().toLocaleString("en-US",{timeZone:"Asia/Kolkata"}));const NB=ist.getHours()*4+Math.floor(ist.getMinutes()/15);
+const P=[
+ {id:"cbh",co:"CEAT",n:"Bhandup",reg:"West",st:"Mumbai, MH",dc:"MSEDCL",f:49.97,fl:6.2,cd:14,sup:"Tyres to RPG retail & OEM hubs"},
+ {id:"chl",co:"CEAT",n:"Halol",reg:"West",st:"Panchmahal, GJ",dc:"GUVNL (PGVCL)",f:50.01,fl:14.8,cd:32,sup:"PCR/TBR tyres for OEMs"},
+ {id:"ckc",co:"CEAT",n:"Kanchipuram",reg:"South",st:"Kanchipuram, TN",dc:"TNPDCL",f:49.95,fl:9.4,cd:21,sup:"Two-wheeler tyres, South hub"},
+ {id:"cng",co:"CEAT",n:"Nagpur",reg:"Central",st:"Nagpur, MH",dc:"MSEDCL",f:50.02,fl:8.1,cd:18,sup:"Motorcycle and scooter tyres"},
+ {id:"cns",co:"CEAT",n:"Nashik",reg:"West",st:"Nashik, MH",dc:"MSEDCL",f:49.99,fl:5.6,cd:12,sup:"Specialty and farm tyres"},
+ {id:"kjp",co:"KEC",n:"Jaipur",reg:"North",st:"Jaipur, RJ",dc:"JVVNL",f:49.93,fl:7.3,cd:16,sup:"Transmission towers, North EPC"},
+ {id:"kmy",co:"KEC",n:"Mysore",reg:"South",st:"Mysuru, KA",dc:"CESC Mysore",f:50,fl:4.9,cd:11,sup:"Towers and hardware, South EPC"},
+ {id:"kng",co:"KEC",n:"Nagpur",reg:"Central",st:"Nagpur, MH",dc:"MSEDCL",f:50.03,fl:6.7,cd:15,sup:"Cables and tower parts"},
+ {id:"kvd",co:"KEC",n:"Vadodara",reg:"West",st:"Vadodara, GJ",dc:"GUVNL (MGVCL)",f:49.98,fl:8.8,cd:19,sup:"Tower galvanizing, West EPC"}];
+const S=[[ "Tata Power Trombay","Thermal","West",150,7.9,.35,.004],["Adani Green Kutch Solar","Solar","West",60,3.6,.1,-.01],["Suzlon Dhule Wind","Wind","West",45,4.4,.1,.012],["Sardar Sarovar Hydro","Hydro","West",40,5.6,.2,-.003],
+ ["NTPL Tuticorin","Thermal","South",120,7.7,.35,-.02],["Pavagada Solar Park","Solar","South",70,3.5,.1,.005],["Muppandal Wind","Wind","South",50,4.3,.1,-.008],["Sharavathi Hydro","Hydro","South",45,5.4,.2,.01],
+ ["Suratgarh TPS","Thermal","North",130,7.5,.35,-.03],["Bhadla Solar Park","Solar","North",80,3.4,.1,.002],["Jaisalmer Wind","Wind","North",55,4.2,.1,-.015],
+ ["Khargone TPS","Thermal","Central",110,7.8,.35,.01],["Omkareshwar Floating Solar","Solar","Central",50,3.7,.1,.006],["Indira Sagar Hydro","Hydro","Central",40,5.5,.2,-.006],
+ ["IEX Day-Ahead Market","Market","All",200,6.4,1,0]].map((a,i)=>({i:i+20,n:a[0],ty:a[1],reg:a[2],cap:a[3],t:a[4],k:a[5],off:a[6]}));
+const av=(s,b)=>{const h=b/4;return s.ty==="Solar"?Math.max(0,Math.sin(Math.PI*(h-6)/12))*s.cap:s.ty==="Wind"?s.cap*(.55+.4*Math.cos((h-3)/24*2*Math.PI))*(.85+.3*rn(s.i+b)):s.cap*(.9+.1*rn(s.i*3+b))};
+const pr=(s,b)=>s.t*(1-s.k+s.k*MU[b>>2])*(1+(rn(s.i*131+b)-.5)*(s.ty==="Market"?.12:.03));
+const cb=(s,b)=>({Thermal:830,Solar:18,Wind:15,Hydro:24})[s.ty]||710*CM[b>>2];
+const sfq=(s,b)=>GFb(b)+s.off+(rn(s.i*57+b)-.5)*.03,pfq=(p,b)=>GFb(b)+(p.f-GF)+(rn(p.id.charCodeAt(1)*71+b)-.5)*.03;
+const ra=Array.from({length:96},(_,b)=>b);
+const fst=f=>Math.abs(f-50)<=.03?["In band","g"]:Math.abs(f-50)<=.05?["Watch","a"]:["Low","r"];
+const LT={CEAT:[["Tyre curing press pre-heat",.34,3,18,6,23],["Banbury mixer cooling loop",.2,4,17,0,22],["Chilled water pre-cool",.16,3,19,8,22],["Effluent and batch pumping",.1,4,18,0,23]],
+KEC:[["Galvanizing kettle heat-up",.38,4,17,0,22],["Annealing furnace batch",.26,3,18,6,23],["Paint-shop curing oven",.18,3,18,8,22],["Fleet and forklift charging",.1,5,18,0,23]]};
+const win=(a,n)=>{let w=0,v=1e9;for(let s=0;s+n<=a.length;s++){let t=0;for(let k=0;k<n;k++)t+=a[s+k]??1e3;if(t<v){v=t;w=s}}return w};
+P.forEach((p,i)=>{p.i=i;p.cd=Math.ceil(p.fl*3.6);p.S=S.filter(s=>s.reg===p.reg||s.ty==="Market");
+ p.row=ra.map(b=>p.S.filter(s=>av(s,b)>.5).map(s=>({s,pr:pr(s,b),av:av(s,b),c:cb(s,b),f:sfq(s,b)})).sort((a,c)=>a.pr-c.pr));
+ p.row=p.row.map(r=>{let nd=p.fl*3.5;r.forEach(x=>{x.tk=Math.min(x.av,nd);nd-=x.tk});const t=r.reduce((a,x)=>a+x.tk,0);r.bp=r.reduce((a,x)=>a+x.pr*x.tk,0)/t;r.bc=r.reduce((a,x)=>a+x.c*x.tk,0)/t;return r});
+ p.pr=p.row.map(r=>r.bp);p.src=p.row.map(r=>r[0]);const q=[...p.pr].sort((a,b)=>a-b);p.q1=q[24];p.q3=q[72];
+ p.pH=Array.from({length:24},(_,h)=>[0,1,2,3].reduce((a,k)=>a+p.pr[h*4+k],0)/4);p.cH=Array.from({length:24},(_,h)=>[0,1,2,3].reduce((a,k)=>a+p.row[h*4+k].bc,0)/4);
+ const mp=Math.max(...p.pH),mc=Math.max(...p.cH),sc=p.pH.map((v,h)=>v/mp*.45+p.cH[h]/mc*.55);
+ p.bw=win(p.pr,4);p.w=p.bw;
+ p.L=LT[p.co].map(l=>{const kw=Math.round(p.fl*1000*l[1]),d=l[2],fs=l[3],s=l[4]+win(sc.slice(l[4],l[5]),d);let a=0,b=0,c=0,e=0;for(let k=0;k<d;k++){a+=p.pH[fs+k];b+=p.pH[s+k];c+=p.cH[fs+k];e+=p.cH[s+k]}
+  return{n:l[0],kw,d,fs,s,sv:Math.round(kw*(a-b)),co2:Math.round(kw*(c-e)/1000),bk:kw*c,nk:kw*e,bt:a/d,nt:b/d,ap:false}});
+ p.sv=p.L.reduce((a,l)=>a+l.sv,0);p.co2=p.L.reduce((a,l)=>a+l.co2,0);
+ const flex=(m)=>ra.map(b=>p.L.reduce((a,l)=>{const st=m?l.s:l.fs;return a+(b>>2>=st&&b>>2<st+l.d?l.kw/1000:0)},0));
+ const base=ra.map(b=>p.fl*2.9*(.88+.12*Math.sin((b-20)/96*6.283))+(rn(i*200+b)-.5)*.25);
+ const fa=flex(0),fb=flex(1);p.act=base.map((v,b)=>v+fa[b]);p.plan=base.map((v,b)=>v+fb[b]);
+ p.pf=.95+.03*rn(i+3);p.mwh=p.act.slice(0,NB+1).reduce((a,v)=>a+v*.25,0);p.md=Math.max(...p.act.slice(0,NB+1))/p.pf;p.v=33+(rn(i+9)-.5)*.6;p.mid="MTR-"+p.id.toUpperCase()+"-HT01";
+ p.now=p.pr[NB];p.cn=p.row[NB].bc});
+S.forEach(s=>{s.pl=P.filter(p=>p.S.includes(s));s.now=pr(s,NB);s.an=av(s,NB);s.pa=ra.map(b=>av(s,b)>.5?pr(s,b):null);s.bw=win(s.pa,4);s.avg=s.pa.filter(x=>x!=null).reduce((a,v,_,r)=>a+v/r.length,0);
+ s.sch=ra.map(b=>av(s,b)*(.9+.1*rn(s.i+b*3)));s.act=s.sch.map((v,b)=>v*(1+(rn(s.i*9+b)-.5)*.08))});
+const rk=[...P].sort((a,b)=>a.now-b.now);P.forEach(p=>p.rank=rk.indexOf(p)+1);
+const flt=()=>P.filter(p=>!$("#co").value||p.co===$("#co").value);
+let cur="cbh",sel=NB,view="ov",fb=NB;
+const line=(ser,o={})=>{const W=640,H=o.H||180,m=34,mn=o.min,mx=o.max,x=b=>m+b*(W-m-8)/95,y=v=>H-22-(v-mn)/(mx-mn)*(H-34);
+ let s=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${o.al||"chart"}">`;
+ if(o.band)s+=`<rect x="${m}" y="${y(o.band[1])}" width="${W-m-8}" height="${y(o.band[0])-y(o.band[1])}" fill="#e1f4e8" rx="4"/>`;
+ for(let h=0;h<24;h+=3)s+=`<text x="${x(h*4)}" y="${H-6}" font-size="10" fill="#5d7088">${String(h).padStart(2,"0")}</text>`;
+ for(let k=0;k<=3;k++){const v=mn+(mx-mn)*k/3;s+=`<text x="2" y="${y(v)+3}" font-size="9.5" fill="#5d7088">${v.toFixed(o.dp??1)}</text>`}
+ ser.forEach(r=>{let d="",gap=1;r.d.forEach((v,b)=>{if(v==null){gap=1;return}d+=(gap?"M":"L")+x(b).toFixed(1)+" "+y(v).toFixed(1)+" ";gap=0});s+=`<path d="${d}" fill="none" stroke="${r.c}" stroke-width="${r.w||2}" ${r.dash?'stroke-dasharray="4 3"':""}/>`});
+ if(o.sel!=null)s+=`<line x1="${x(o.sel)}" x2="${x(o.sel)}" y1="6" y2="${H-22}" stroke="#2b6cb0" stroke-width="2"/>`;
+ return s+`<line x1="${x(NB)}" x2="${x(NB)}" y1="6" y2="${H-22}" stroke="#0f1f38" stroke-dasharray="3 3"/></svg>`};
+const COL=["#0f8b8d","#d99a00","#2b6cb0","#c0392b","#7a4fb5","#2f9e5f"];
+const tier=(p,b)=>p.pr[b]<=p.q1?0:p.pr[b]>=p.q3?2:1;
+function strip(p){let h='<div class="sc"><div class="hz"><span></span>'+Array.from({length:24},(_,i)=>`<span class="hr">${String(i).padStart(2,"0")}</span>`).join("");
+ for(let q=0;q<4;q++){h+=`<span>:${String(q*15).padStart(2,"0")}</span>`;for(let hr=0;hr<24;hr++){const b=hr*4+q;h+=`<button class="hc t${tier(p,b)} ${b===NB?"nw":""} ${b===sel?"sl":""}" data-b="${b}" aria-label="Block ${b+1}, ${bt(b)}, ₹${p.pr[b].toFixed(2)} per kWh" title="#${b+1} · ${bt(b)} · ₹${p.pr[b].toFixed(2)}"></button>`}}
+ return h+'</div></div><div class="lg"><span><i style="background:#43b581"></i>Cheapest quarter</span><span><i style="background:#f3c969"></i>Mid</span><span><i style="background:#e8776b"></i>Costliest quarter</span><span><i style="box-shadow:inset 0 0 0 2px #0f1f38"></i>Current block</span><span><i style="outline:2px solid #2b6cb0"></i>Selected</span></div>'}
+function blockPanel(p){const b=sel,g=GFb(b),pf=pfq(p,b),r=p.row[b],ch=r[0],mw=p.act[b],mx=Math.max(...p.pr),f=fst(pf);
+ return `<div class="card mt" style="border-color:var(--bl)"><h2>Block ${b+1} of 96 · ${bt(b)}–${bt(b+1>95?0:b+1)} ${b===NB?'<span class="tag d">current</span>':b<NB?'<span class="tag">metered</span>':'<span class="tag t">scheduled</span>'}</h2><p class="sub">All sources that can supply ${p.co} ${p.n} in this window, with grid and plant frequency</p>
+ <div class="grid g5" style="grid-template-columns:repeat(auto-fit,minmax(130px,1fr))"><div class="card kpi"><span>Grid frequency</span><b>${g.toFixed(3)}</b><i style="color:var(--mu)">Hz</i></div><div class="card kpi"><span>Plant frequency</span><b>${pf.toFixed(3)}</b><i style="color:${f[1]==="g"?"":"#c0392b"}">${((pf-g)*1000>0?"+":"")}${Math.round((pf-g)*1000)} mHz · ${f[0]}</i></div><div class="card kpi"><span>Blended landed cost</span><b>₹${p.pr[b].toFixed(2)}</b><i>Lead: ${ch.s.n}</i></div><div class="card kpi"><span>Plant meter</span><b>${mw.toFixed(2)} MW</b><i style="color:var(--mu)">${F(mw*250)} kWh in block</i></div><div class="card kpi"><span>vs peak block</span><b>−${((1-p.pr[b]/mx)*100).toFixed(0)}%</b><i>peak ₹${mx.toFixed(2)}</i></div></div>
+ <div class="sc mt"><table><tr><th>#</th><th>Supplier plant</th><th>Type</th><th>Available MW</th><th>Dispatch MW</th><th>₹/kWh</th><th>gCO₂/kWh</th><th>Supplier Hz</th><th>Δ vs grid</th><th>Status</th></tr>${r.map((x,i)=>{const d=Math.round((x.f-g)*1000),fs=fst(x.f);return`<tr class="${i?"":"hi"}"><td><b>${i+1}</b></td><td><b>${x.s.n}</b></td><td><span class="tag">${x.s.ty}</span></td><td>${x.av.toFixed(1)}</td><td>${x.tk.toFixed(1)}</td><td><b>₹${x.pr.toFixed(2)}</b></td><td>${Math.round(x.c)}</td><td>${x.f.toFixed(3)}</td><td>${d>0?"+":""}${d} mHz</td><td><span class="tag ${fs[1]}">${fs[0]}</span>${i?"":' <span class="tag d">cheapest</span>'}</td></tr>`}).join("")}${p.S.filter(s=>!r.some(x=>x.s===s)).map(s=>`<tr><td>–</td><td>${s.n}</td><td><span class="tag">${s.ty}</span></td><td colspan="7" style="color:var(--mu)">Not generating in this block</td></tr>`).join("")}</table></div>
+ <p style="font-size:13px;margin:12px 0 0"><b>Action:</b> ${b>=p.bw*1&&b<p.bw+4?"Inside the cheapest 1-hour window — run flexible loads now.":`Cheapest 1-hour window is <b>${bt(p.bw)}–${bt(p.bw+4)}</b> at ₹${(p.pr.slice(p.bw,p.bw+4).reduce((a,v)=>a+v,0)/4).toFixed(2)}/kWh. Lead supplier then: cheapest available plant.`}</p></div>`}
+function pdv(){const p=P.find(x=>x.id===cur),f=fst(p.f),bw=p.pr.slice(p.bw,p.bw+4).reduce((a,v)=>a+v,0)/4;
+ return `<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px"><span class="tag d">${p.reg} region</span><span class="tag">${p.st}</span><span class="tag">${p.dc}</span><span class="tag">${p.sup}</span><span class="tag">Contract demand ${p.cd} MVA</span></div>
+ <div class="grid g5"><div class="card kpi"><span>Blended cost now</span><b>₹${p.now.toFixed(2)}</b><i>Lead: ${p.src[NB].s.n}</i></div><div class="card kpi"><span>Cheapest 1-hr window</span><b>${bt(p.bw)}</b><i>₹${bw.toFixed(2)} avg</i></div><div class="card kpi"><span>Plant vs grid</span><b>${p.f.toFixed(2)} Hz</b><i style="color:${f[1]==="g"?"":"#c0392b"}">${Math.round((p.f-GF)*1000)} mHz · ${f[0]}</i></div><div class="card kpi"><span>Saving / day</span><b>${rs(p.sv)}</b><i>${p.co2} kg CO₂ avoided</i></div><div class="card kpi"><span>Meter, today so far</span><b>${p.mwh.toFixed(1)} MWh</b><i>${p.S.length} sources linked</i></div></div>
+ <div class="card mt"><h2>96 time blocks — tap a window for full detail</h2><p class="sub">Rows are quarter-hours, columns are hours. Colour = blended landed cost after dispatching suppliers cheapest-first.</p>${strip(p)}</div>
+ ${blockPanel(p)}
+ <div class="grid g2 mt"><div class="card"><h2>Supplier price by block (₹/kWh)</h2><p class="sub">Gaps mean the plant is not generating. Blue line = selected block</p>${line(p.S.map((s,i)=>({d:ra.map(b=>av(s,b)>.5?pr(s,b):null),c:COL[i%6]})).concat([{d:p.pr,c:"#0f1f38",w:3,dash:1}]),{min:2,max:11,sel,al:"Supplier price by block"})}<div class="lg">${p.S.map((s,i)=>`<span><i style="background:${COL[i%6]}"></i>${s.n}</span>`).join("")}<span><i style="background:#0f1f38"></i>Blended landed cost</span></div></div>
+ <div class="card"><h2>Grid vs plant frequency</h2><p class="sub">Green band is the permitted 49.95–50.05 Hz</p>${line([{d:ra.map(GFb),c:"#0f1f38",w:2,dash:1},{d:ra.map(b=>pfq(p,b)),c:"#0f8b8d",w:2.2}],{min:49.9,max:50.1,band:[49.95,50.05],dp:2,sel,al:"Grid vs plant frequency"})}<div class="lg"><span><i style="background:#0f1f38"></i>Grid</span><span><i style="background:#0f8b8d"></i>${p.n} plant</span></div></div></div>
+ <div class="grid g2 mt"><div class="card"><h2>Plant meter — demand per block (MW)</h2><p class="sub">${p.mid} · fixed schedule vs GridSync plan</p>${line([{d:p.act,c:"#c0392b",dash:1},{d:p.plan,c:"#0f8b8d",w:2.5}],{min:0,max:Math.ceil(Math.max(...p.act,...p.plan)),sel,al:"Plant demand"})}<div class="lg"><span><i style="background:#c0392b"></i>Fixed schedule</span><span><i style="background:#0f8b8d"></i>GridSync plan</span></div></div>
+ <div class="card"><h2>Meter register</h2><p class="sub">Mock readings, ${bt(NB)} IST</p><table>${[["Meter ID",p.mid],["Import today",p.mwh.toFixed(1)+" MWh"],["Max demand",p.md.toFixed(1)+" MVA of "+p.cd],["Power factor",p.pf.toFixed(3)],["Voltage",p.v.toFixed(1)+" kV"],["Linked suppliers",p.S.length]].map(r=>`<tr><td style="color:var(--mu)">${r[0]}</td><td><b>${r[1]}</b></td></tr>`).join("")}</table></div></div>
+ <div class="card mt"><h2>Flexible loads and recommended windows</h2><div class="sc"><table><tr><th>Load</th><th>Draw</th><th>Now</th><th>Move to</th><th>₹/kWh</th><th>Saving</th><th></th></tr>${p.L.map((l,j)=>`<tr><td>${l.n}</td><td>${F(l.kw)} kW</td><td>${hh(l.fs)}</td><td><b>${hh(l.s)}–${hh(l.s+l.d)}</b></td><td>${l.bt.toFixed(2)} → ${l.nt.toFixed(2)}</td><td>${rs(l.sv)}</td><td>${l.ap?'<span class="btn dn">Approved</span>':`<button class="btn" data-a="${p.id}|${j}">Approve</button>`}</td></tr>`).join("")}</table></div></div>`}
+function pcard(p){const f=fst(p.f);return `<button class="pb ${p.rank===1?"best":""}" data-p="${p.id}"><div class="nm"><span>${p.co} ${p.n}</span>${p.rank<=3?`<span class="tag d">#${p.rank} cheapest</span>`:""}</div><div class="fw"><span class="tag">${p.st}</span><span class="tag ${f[1]}">${p.f.toFixed(2)} Hz · ${f[0]}</span></div>
+ <div class="row3"><div><b>₹${p.now.toFixed(2)}</b><span>best now</span></div><div><b>${Math.round(p.cn)}</b><span>gCO₂/kWh</span></div><div><b>${p.fl} MW</b><span>flexible</span></div></div>
+ <div class="fw"><span class="tag t">${p.S.length} suppliers</span><span class="tag t">Window ${bt(p.bw)}</span><span class="tag g">Save ${rs(p.sv)}</span></div></button>`}
+const REG=["West","South","Central","North"];
+function render(){const L=flt(),sv=L.reduce((a,p)=>a+p.sv,0),co=L.reduce((a,p)=>a+p.co2,0),fl=L.reduce((a,p)=>a+p.fl,0),ck=rk.find(p=>L.includes(p));
+ $("#gf").textContent=GFb(NB).toFixed(2)+" Hz";
+ const ag=(k)=>Array.from({length:96},(_,b)=>L.reduce((a,p)=>a+(k?p.plan[b]:p.act[b]),0));
+ $("#ov").innerHTML=`<div class="grid g4"><div class="card kpi"><span>Flexible load under management</span><b>${fl.toFixed(1)} MW</b><i>${L.length} plants · ${L.reduce((a,p)=>a+p.L.length,0)} loads</i></div><div class="card kpi"><span>Projected saving, tomorrow</span><b>${rs(sv)}</b><i>≈ ${rs(sv*312)} / year</i></div><div class="card kpi"><span>CO₂ avoided, tomorrow</span><b>${(co/1000).toFixed(2)} t</b><i>no change in output</i></div><div class="card kpi"><span>Cheapest plant right now</span><b>${ck.co} ${ck.n}</b><i>₹${ck.now.toFixed(2)} / kWh</i></div></div>
+ <div class="grid g2 mt"><div class="card"><h2>Group demand, 96 blocks (MW)</h2><p class="sub">Metered fixed schedule versus GridSync plan across selected plants</p>${line([{d:ag(0),c:"#c0392b",dash:1},{d:ag(1),c:"#0f8b8d",w:2.5}],{min:0,max:Math.ceil(Math.max(...ag(0),...ag(1))/10)*10,al:"Group demand"})}<div class="lg"><span><i style="background:#c0392b"></i>Fixed schedule</span><span><i style="background:#0f8b8d"></i>GridSync plan</span></div></div>
+ <div class="card hero"><h2>Sustainability-linked financing</h2><p class="sub">Group Procurement view</p><div class="row3" style="grid-template-columns:1fr 1fr"><div style="background:rgba(255,255,255,.12)"><b>−${(100*L.reduce((x,p)=>x+p.L.reduce((y,l)=>y+l.bk-l.nk,0),0)/L.reduce((x,p)=>x+p.L.reduce((y,l)=>y+l.bk,0),0)).toFixed(1)}%</b><span style="color:#bcd6e2">flexible-load carbon intensity</span></div><div style="background:rgba(255,255,255,.12)"><b>−12 bps</b><span style="color:#bcd6e2">indicative SLL margin step-down</span></div></div><p style="font-size:13px;margin:12px 0 0">Verified shifting across ${L.length} plants and ${S.length-1} supplier plants feeds the group ESG score, and gives utilities predictable flexible demand.</p></div></div>
+ <div class="card mt"><h2>Cheapest source right now, by region</h2><p class="sub">Block ${NB+1} · ${bt(NB)} IST</p><div class="grid g4">${REG.map(r=>{const q=P.filter(p=>p.reg===r),p=q[0],c=p.row[NB][0];return`<div class="card" style="background:var(--so);box-shadow:none"><span class="tag d">${r}</span><div style="font-weight:800;margin-top:8px">${c.s.n}</div><div style="color:var(--mu);font-size:12px">${c.s.ty} · ₹${c.pr.toFixed(2)}/kWh · ${Math.round(c.c)} gCO₂</div><div style="font-size:12px;margin-top:4px">Serves ${q.map(x=>x.co+" "+x.n).join(", ")}</div></div>`}).join("")}</div></div>
+ <div class="card mt"><h2>Top recommendations awaiting approval</h2><div class="sc"><table><tr><th>Plant</th><th>Load</th><th>Move</th><th>Saving</th><th></th></tr>${L.flatMap(p=>p.L.map((l,j)=>({p,l,j}))).sort((a,b)=>b.l.sv-a.l.sv).slice(0,5).map(({p,l,j})=>`<tr><td><b>${p.co} ${p.n}</b></td><td>${l.n}</td><td>${hh(l.fs)} → <b>${hh(l.s)}</b></td><td>${rs(l.sv)}</td><td>${l.ap?'<span class="btn dn">Approved</span>':`<button class="btn" data-a="${p.id}|${j}">Approve</button>`}</td></tr>`).join("")}</table></div></div>`;
+ $("#pl").innerHTML=`<p class="sub">RPG plants by grid region. Each block lists its linked supplier plants; select one for 96-window detail.</p>`+REG.map(r=>{const q=L.filter(p=>p.reg===r);return q.length?`<div class="rg"><h3>${r} region</h3><span class="tag">${q.length} plants</span><span class="tag t">${q[0].S.length} suppliers</span><span class="tag a">Avg ₹${(q.reduce((a,p)=>a+p.now,0)/q.length).toFixed(2)} now</span></div><div class="pl">${q.map(pcard).join("")}</div>`:""}).join("");
+ $("#sp").innerHTML=`<p class="sub">Supplier plants feeding RPG sites, by region. Select a supplier for its price curve, frequency and the RPG plants it serves.</p>`+REG.concat("All").map(r=>{const q=S.filter(s=>s.reg===r);return`<div class="rg"><h3>${r==="All"?"Market (all regions)":r+" region"}</h3><span class="tag">${q.length} sources</span></div><div class="sc"><table><tr><th>Supplier plant</th><th>Type</th><th>Capacity</th><th>Available now</th><th>₹/kWh now</th><th>Avg ₹/kWh</th><th>gCO₂/kWh</th><th>Plant Hz</th><th>Δ vs grid</th><th>Cheapest 1-hr</th><th>Feeds</th></tr>${q.map(s=>{const f=sfq(s,NB),d=Math.round((f-GFb(NB))*1000);return`<tr class="cl" data-s="${s.i}"><td><b>${s.n}</b></td><td><span class="tag">${s.ty}</span></td><td>${s.cap} MW</td><td>${s.an.toFixed(1)} MW</td><td><b>${s.an>.5?"₹"+s.now.toFixed(2):"–"}</b></td><td>₹${s.avg.toFixed(2)}</td><td>${Math.round(cb(s,NB))}</td><td>${f.toFixed(3)} <span class="tag ${fst(f)[1]}">${fst(f)[0]}</span></td><td>${d>0?"+":""}${d} mHz</td><td>${s.bw!=null?bt(s.bw):"–"}</td><td>${s.pl.length} plants</td></tr>`}).join("")}</table></div>`}).join("");
+ const fq=fb,g=GFb(fq),ent=P.map(p=>({n:p.co+" "+p.n,f:pfq(p,fq),k:"RPG plant"})).concat(S.filter(s=>av(s,fq)>.5).map(s=>({n:s.n,f:sfq(s,fq),k:s.ty}))).sort((a,b)=>a.f-b.f);
+ $("#fq").innerHTML=`<div class="card"><h2>Grid vs every plant — block ${fq+1} · ${bt(fq)}</h2><p class="sub">Drag to inspect any of the 96 blocks. Plants below grid frequency are under stress.</p><input type="range" id="fr" min="0" max="95" value="${fq}" aria-label="Time block"><div class="grid g4 mt"><div class="card kpi"><span>Grid frequency</span><b>${g.toFixed(3)} Hz</b></div><div class="card kpi"><span>Highest</span><b>${ent[ent.length-1].f.toFixed(3)}</b><i style="color:var(--mu)">${ent[ent.length-1].n}</i></div><div class="card kpi"><span>Lowest</span><b>${ent[0].f.toFixed(3)}</b><i style="color:var(--rd)">${ent[0].n}</i></div><div class="card kpi"><span>Outside band</span><b>${ent.filter(e=>fst(e.f)[1]!=="g").length}</b><i style="color:var(--mu)">of ${ent.length} generating</i></div></div></div>
+ <div class="grid g2 mt"><div class="card"><h2>Grid frequency across the day</h2>${line([{d:ra.map(GFb),c:"#0f1f38"}],{min:49.9,max:50.1,band:[49.95,50.05],dp:2,sel:fq,al:"Grid frequency"})}</div><div class="card"><div class="sc" style="max-height:330px"><table><tr><th>Entity</th><th>Type</th><th>Hz</th><th>Δ mHz</th></tr>${ent.map(e=>`<tr><td><b>${e.n}</b></td><td><span class="tag">${e.k}</span></td><td>${e.f.toFixed(3)}</td><td><span class="tag ${fst(e.f)[1]}">${Math.round((e.f-g)*1000)>0?"+":""}${Math.round((e.f-g)*1000)}</span></td></tr>`).join("")}</table></div></div></div>`;
+ $("#fr").oninput=e=>{fb=+e.target.value;render();go("fq",1)};
+ $("#mt").innerHTML=`<div class="card"><h2>RPG plant meters (incomer)</h2><p class="sub">Mock readings at ${bt(NB)} IST</p><div class="sc"><table><tr><th>Plant</th><th>Meter</th><th>Now MW</th><th>Import today</th><th>Max demand</th><th>PF</th><th>kV</th><th>Frequency</th></tr>${L.map(p=>`<tr class="cl" data-p="${p.id}"><td><b>${p.co} ${p.n}</b></td><td>${p.mid}</td><td>${p.act[NB].toFixed(2)}</td><td>${p.mwh.toFixed(1)} MWh</td><td>${p.md.toFixed(1)} / ${p.cd} MVA</td><td>${p.pf.toFixed(3)}</td><td>${p.v.toFixed(1)}</td><td>${p.f.toFixed(2)} Hz</td></tr>`).join("")}</table></div></div>
+ <div class="card mt"><h2>Supplier injection meters</h2><p class="sub">Scheduled versus actual energy, today so far</p><div class="sc"><table><tr><th>Supplier plant</th><th>Region</th><th>Scheduled MWh</th><th>Actual MWh</th><th>Deviation</th><th>Status</th></tr>${S.map(s=>{const a=s.sch.slice(0,NB+1).reduce((x,v)=>x+v*.25,0),c=s.act.slice(0,NB+1).reduce((x,v)=>x+v*.25,0),d=a?(c-a)/a*100:0;return`<tr class="cl" data-s="${s.i}"><td><b>${s.n}</b></td><td>${s.reg}</td><td>${a.toFixed(1)}</td><td>${c.toFixed(1)}</td><td>${d>0?"+":""}${d.toFixed(1)}%</td><td><span class="tag ${Math.abs(d)<3?"g":"a"}">${Math.abs(d)<3?"Within limit":"Check DSM"}</span></td></tr>`}).join("")}</table></div></div>`;
+ $("#sc").innerHTML=`<div class="card"><h2>Tomorrow’s load schedule</h2><p class="sub">Every flexible load with the recommended window</p><div class="sc"><table><tr><th>Plant</th><th>Load</th><th>Draw</th><th>Hours</th><th>Current</th><th>Recommended</th><th>Source</th><th>Saving</th><th>CO₂</th><th></th></tr>${L.flatMap(p=>p.L.map((l,j)=>`<tr><td><b>${p.co} ${p.n}</b></td><td>${l.n}</td><td>${F(l.kw)} kW</td><td>${l.d}</td><td>${hh(l.fs)}</td><td><span class="tag t">${hh(l.s)}–${hh(l.s+l.d)}</span></td><td>${p.src[l.s*4].s.n}</td><td>${rs(l.sv)}</td><td>${l.co2} kg</td><td>${l.ap?'<span class="btn dn">Approved</span>':`<button class="btn" data-a="${p.id}|${j}">Approve</button>`}</td></tr>`)).join("")}</table></div></div>`;
+ if(view==="pdv")$("#pdv").innerHTML=pdv()}
+function sdr(i){const s=S.find(x=>x.i===i);$("#dr").innerHTML=`<button class="x" id="cx" aria-label="Close">×</button><h2>${s.n}</h2><div class="fw" style="margin:6px 0 14px"><span class="tag d">${s.ty}</span><span class="tag">${s.reg==="All"?"All regions":s.reg}</span><span class="tag">${s.cap} MW capacity</span></div>
+ <div class="card"><h2>Price by block (₹/kWh)</h2><p class="sub">Cheapest 1-hour window ${s.bw!=null?bt(s.bw)+"–"+bt(s.bw+4):"n/a"}</p>${line([{d:s.pa,c:"#0f8b8d",w:2.5}],{min:2,max:11,al:"Supplier price"})}</div>
+ <div class="card mt"><h2>Supplier frequency vs grid</h2>${line([{d:ra.map(GFb),c:"#0f1f38",dash:1},{d:ra.map(b=>s.pa[b]==null?null:sfq(s,b)),c:"#d99a00",w:2.2}],{min:49.9,max:50.1,band:[49.95,50.05],dp:2,al:"Supplier frequency"})}</div>
+ <div class="card mt"><h2>Scheduled vs actual (MW)</h2>${line([{d:s.sch,c:"#2b6cb0",dash:1},{d:s.act,c:"#c0392b"}],{min:0,max:Math.ceil(s.cap),al:"Injection"})}</div>
+ <div class="card mt"><h2>RPG plants served</h2><table>${s.pl.map(p=>`<tr class="cl" data-p="${p.id}"><td><b>${p.co} ${p.n}</b></td><td>${p.st}</td><td><span class="tag t">${p.src.filter(x=>x.s===s).length} of 96 blocks cheapest</span></td></tr>`).join("")}</table></div>`;
+ $("#dr").classList.add("on");$("#ovl").classList.add("on");$("#cx").onclick=cl_;$("#cx").focus()}
+const cl_=()=>{$("#dr").classList.remove("on");$("#ovl").classList.remove("on")};
+const TT={ov:["Overview","Group-wide demand, savings and financing impact"],pl:["RPG Plants","Nine plants across four grid regions"],pdv:["","96-window source, frequency and meter detail"],sp:["Supplier Plants","Region-wise plants supplying RPG sites"],fq:["Frequency","Grid frequency against RPG and supplier plants"],mt:["Meter Readings","Plant incomers and supplier injection meters"],sc:["Schedule","Approve recommended windows for tomorrow"]};
+function go(v,keep){view=v;document.querySelectorAll("section").forEach(s=>s.hidden=s.id!==v);document.querySelectorAll(".nv").forEach(b=>b.dataset.v===(v==="pdv"?"pl":v)?b.setAttribute("aria-current","page"):b.removeAttribute("aria-current"));
+ if(v==="pdv"){const p=P.find(x=>x.id===cur);$("#bc").innerHTML='<a data-v="pl">RPG Plants</a> › ';$("#ttl").textContent=p.co+" "+p.n;$("#pdv").innerHTML=pdv()}else{$("#bc").textContent="";$("#ttl").textContent=TT[v][0]}
+ $("#stl").textContent=TT[v][1];if(!keep)scrollTo(0,0)}
+document.addEventListener("click",e=>{let t;if(t=e.target.closest("[data-a]")){const[i,j]=t.dataset.a.split("|");P.find(p=>p.id===i).L[j].ap=true;render();return}
+ if(t=e.target.closest("[data-b]")){sel=+t.dataset.b;$("#pdv").innerHTML=pdv();return}
+ if(t=e.target.closest("[data-p]")){cur=t.dataset.p;sel=NB;cl_();go("pdv");return}
+ if(t=e.target.closest("[data-s]")){sdr(+t.dataset.s);return}
+ if(t=e.target.closest("[data-v]"))go(t.dataset.v)});
+$("#ovl").onclick=cl_;addEventListener("keydown",e=>e.key==="Escape"&&cl_());
+$("#pd").textContent=new Date(Date.now()+864e5).toLocaleDateString("en-IN",{day:"numeric",month:"short",year:"numeric"});
+$("#co").onchange=render;render();go("ov");
+</script>
+</body>
+</html>

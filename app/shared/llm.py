@@ -1,25 +1,25 @@
-"""Shared LLM factory — returns AzureChatOpenAI configured from settings."""
+"""Shared LLM factory — returns a Groq-backed ChatGroq instance.
+
+Groq provides fast inference on open-weight models (Llama, Mixtral, Gemma).
+Sign up at https://console.groq.com to get a free API key.
+"""
 from __future__ import annotations
 
-from langchain_openai import AzureChatOpenAI
+from langchain_groq import ChatGroq
 
 from shared.config import get_settings
 
 
-def get_llm(max_tokens: int = 512, streaming: bool = True) -> AzureChatOpenAI:
+def get_llm(max_tokens: int = 1024, temperature: float = 0.1) -> ChatGroq:
     settings = get_settings()
-    # Strip deployment path if the user provided the full URL, e.g.
-    # https://host.azure.com/openai/deployments/... -> https://host.azure.com
-    endpoint = settings.azure_openai_endpoint
-    if "/openai" in endpoint:
-        endpoint = endpoint.split("/openai")[0]
-    return AzureChatOpenAI(
-        azure_endpoint=endpoint,
-        azure_deployment=settings.azure_openai_deployment,
-        openai_api_key=settings.azure_openai_api_key,
-        openai_api_version=settings.azure_openai_api_version,
+    if not settings.groq_api_key or settings.groq_api_key == "your-groq-api-key-here":
+        raise RuntimeError(
+            "GROQ_API_KEY is not set. "
+            "Get a free key at https://console.groq.com and add it to app/.env"
+        )
+    return ChatGroq(
+        api_key=settings.groq_api_key,
+        model=settings.groq_model,
         max_tokens=max_tokens,
-        # streaming=True lets OpenAIInstrumentor record a "First Token Stream
-        # Event" span event, which Phoenix uses to compute TTFT.
-        streaming=streaming,
+        temperature=temperature,
     )

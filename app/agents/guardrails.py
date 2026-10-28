@@ -1,27 +1,18 @@
-"""Input guardrails node — runs first on every turn.
+"""Guardrails — lightweight input checks for the GridSync advisor agent.
 
-Baseline checks: strip empty turns, cap message history, flag obvious prompt
-injection. Extend with PII redaction, jailbreak detection, moderation, etc.
+Currently: pass-through. Add content filtering here if needed.
 """
 from __future__ import annotations
 
 from agents.state import AgentState
 
-_MAX_HISTORY = 40
-_INJECTION_MARKERS = ("ignore previous instructions", "disregard the system prompt")
-
 
 def guardrails_node(state: AgentState) -> AgentState:
+    """Validate input before passing to the advisor."""
+    # Trim very long messages to prevent token overflow
     messages = state.get("messages", [])
-
-    # Cap runaway history to protect the context window.
-    if len(messages) > _MAX_HISTORY:
-        state["messages"] = messages[-_MAX_HISTORY:]
-
-    # Very light prompt-injection heuristic on the latest user message.
-    if messages and messages[-1].get("role") == "user":
-        lowered = messages[-1].get("content", "").lower()
-        if any(marker in lowered for marker in _INJECTION_MARKERS):
-            state["human_review_reason"] = "possible_prompt_injection"
-
+    for m in messages:
+        if m.get("role") == "user" and len(m.get("content", "")) > 2000:
+            m["content"] = m["content"][:2000] + "…"
+    state["messages"] = messages
     return state

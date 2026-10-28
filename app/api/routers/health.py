@@ -1,4 +1,4 @@
-"""Liveness / readiness probe. Consumed by ACA + Docker HEALTHCHECK + nginx."""
+"""Health check endpoint."""
 from fastapi import APIRouter
 
 router = APIRouter()
@@ -6,4 +6,4 @@ router = APIRouter()
 
 @router.get("/health")
 async def health():
-    return {"status": "ok", "version": "1.0.0"}
+    return {"status": "ok", "version": "1.0.0", "project": "RPG GridSync"}

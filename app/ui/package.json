@@ -1,5 +1,5 @@
 {
-  "name": "__APP_NAME__-ui",
+  "name": "rpg-gridsync-ui",
   "version": "1.0.0",
   "private": true,
   "type": "module",
@@ -14,16 +14,18 @@
     "lucide-react": "^0.383.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "react-router-dom": "^6.23.1",
+    "react-markdown": "^10.1.0",
+    "react-router-dom": "^7.18.4",
+    "remark-gfm": "^4.0.1",
     "zustand": "^4.5.2"
   },
   "devDependencies": {
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
-    "@vitejs/plugin-react": "^4.3.0",
+    "@vitejs/plugin-react": "^4.2.0",
     "autoprefixer": "^10.4.19",
     "postcss": "^8.4.38",
-    "tailwindcss": "^3.4.4",
+    "tailwindcss": "^3.4.17",
     "typescript": "^5.4.5",
     "vite": "^7.3.1"
   }

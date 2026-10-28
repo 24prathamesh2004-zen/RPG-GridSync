@@ -1,0 +1,1 @@
+"""GridSync data ingestion package."""

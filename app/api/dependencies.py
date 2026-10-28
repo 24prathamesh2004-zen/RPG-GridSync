@@ -1,23 +1,19 @@
-"""FastAPI dependencies — shared singletons (Redis, etc.)."""
+"""FastAPI dependencies — DB session and shared singletons."""
 from __future__ import annotations
 
-from redis.asyncio import Redis
+from typing import AsyncGenerator
 
-from shared.config import get_settings
+from sqlalchemy.ext.asyncio import AsyncSession
 
-settings = get_settings()
-_redis: Redis | None = None
-
-
-async def get_redis() -> Redis:
-    """FastAPI dependency — returns a singleton Redis connection."""
-    global _redis
-    if _redis is None:
-        _redis = Redis.from_url(settings.redis_url, decode_responses=True)
-    return _redis
+from db.base import AsyncSessionLocal
 
 
-async def get_redis_direct() -> Redis:
-    """Direct Redis connection for use outside FastAPI DI (e.g. Temporal
-    activities). The caller must ``await .aclose()`` when done."""
-    return Redis.from_url(settings.redis_url, decode_responses=True)
+async def get_db() -> AsyncGenerator[AsyncSession, None]:
+    """FastAPI dependency — yields a DB session per request."""
+    async with AsyncSessionLocal() as session:
+        try:
+            yield session
+            await session.commit()
+        except Exception:
+            await session.rollback()
+            raise
