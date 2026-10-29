@@ -15,7 +15,6 @@ variables:
   resourceGroup: 'Zenlabs-Agent-Foundry'
   environmentName: 'zaf-aca-pvt-env'
   backendApp: '__APP_NAME__-be'
-  workerApp: '__APP_NAME__-worker'
   backendRepo: '__APP_NAME__-be'
   backendPort: '__BACKEND_PORT__'
   tag: 'latest'
@@ -30,7 +29,7 @@ stages:
       - job: BuildDeploy
         steps:
           - task: AzureCLI@2
-            displayName: Build image (ACR) and deploy backend + worker
+            displayName: Build image (ACR) and deploy backend
             inputs:
               azureSubscription: $(azureSubscription)
               scriptType: bash
@@ -55,14 +54,3 @@ stages:
                     --env-vars APP_ENV=production LOG_LEVEL=INFO
                 fi
 
-                echo "== Deploy worker (same image) =="
-                if az containerapp show -n $(workerApp) -g $(resourceGroup) >/dev/null 2>&1; then
-                  az containerapp update -n $(workerApp) -g $(resourceGroup) --image "$IMAGE"
-                else
-                  az containerapp create -n $(workerApp) -g $(resourceGroup) \
-                    --environment $(environmentName) --image "$IMAGE" --ingress none \
-                    --min-replicas 1 --max-replicas 3 --cpu 0.5 --memory 1Gi \
-                    --registry-server $(acrLoginServer) \
-                    --command python -- -m workers.worker \
-                    --env-vars APP_ENV=production LOG_LEVEL=INFO
-                fi

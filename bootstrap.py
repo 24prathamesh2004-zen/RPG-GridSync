@@ -21,9 +21,6 @@ Placeholders (see template.config.json):
     __APP_DESC__     one-line description
     __BACKEND_PORT__ FastAPI port (default 8000)
     __FRONTEND_PORT__ Vite dev port (default 3000)
-    __NAMESPACE__    Temporal namespace (default = app name)
-    __TASK_QUEUE__   Temporal task queue (default = <name>-agents)
-    __DB_NAME__      Postgres database name (default = slug)
 """
 from __future__ import annotations
 
@@ -40,7 +37,7 @@ TEMPLATE_ROOT = Path(__file__).resolve().parent
 EXCLUDE_DIRS = {".git", ".venv", "venv", "node_modules", "dist", "__pycache__",
                 ".pytest_cache", ".mypy_cache", ".ruff_cache", ".vite"}
 EXCLUDE_FILES = {"bootstrap.py", "bootstrap.sh", "template.config.json",
-                 "README.md", "BOOTSTRAP_GUIDE.md", ".DS_Store"}
+                 "README.md", ".DS_Store"}
 # Extensions treated as binary (copied byte-for-byte, never token-replaced).
 BINARY_EXT = {".crt", ".pem", ".png", ".jpg", ".jpeg", ".gif", ".ico", ".pdf",
               ".woff", ".woff2", ".ttf", ".otf", ".zip", ".gz"}
@@ -50,7 +47,6 @@ NAME_RE = re.compile(r"^[a-z][a-z0-9-]*[a-z0-9]$")
 
 def derive(args: argparse.Namespace) -> dict[str, str]:
     name = args.name
-    slug = name.replace("-", "_")
     title = args.title or " ".join(w.capitalize() for w in name.split("-"))
     return {
         "__APP_NAME__": name,
@@ -59,9 +55,6 @@ def derive(args: argparse.Namespace) -> dict[str, str]:
         "__APP_DESC__": args.desc or f"{title} — an AI agent application on the ZenLabs Agent Foundry.",
         "__BACKEND_PORT__": str(args.backend_port),
         "__FRONTEND_PORT__": str(args.frontend_port),
-        "__NAMESPACE__": args.namespace or name,
-        "__TASK_QUEUE__": args.task_queue or f"{name}-agents",
-        "__DB_NAME__": args.db_name or slug,
     }
 
 
@@ -111,47 +104,36 @@ APP_README = """# {title}
 Generated from the **accelerator-bootstrapper-template** (ZenLabs Agent Foundry).
 
 ## Architecture
-FastAPI + LangGraph (supervisor loop) + Temporal (durable workflows) + Redis +
-Postgres + Arize Phoenix observability, with a React/Vite/Tailwind UI served by
-nginx. Everything deploys to Azure Container Apps.
+FastAPI with SQLite and a Groq-backed GridSync Agent, plus a React/Vite/Tailwind
+UI served by nginx. The backend can also use a configured SQLAlchemy database URL.
 
 ## Run locally
 ```bash
 cd app
-cp .env.example .env            # fill in Azure OpenAI creds
-docker compose -f ../docker-compose.local.yml up -d   # postgres + redis
+cp .env.example .env            # add a Groq API key
 python -m venv .venv && . .venv/bin/activate && pip install -r requirements.txt
-alembic upgrade head
 uvicorn api.main:app --reload --port {port}      # API
-python -m workers.worker                          # Temporal worker (separate shell)
 
 cd ui && npm install && npm run dev               # UI on :{fport}
 ```
-Or bring up the full stack (API, worker, Temporal, Phoenix):
+Or bring up the API and UI containers:
 ```bash
 cd app && docker compose up --build
 ```
 
 ## Deploy to Azure Container Apps
-```bash
-bash infra/aca-setup.sh          # one-time provisioning (edit VARIABLES first)
-```
-Or push to `main` and let `azure-pipelines-be.yml` / `azure-pipelines-fe.yml` deploy.
+Configure the Azure service connection, registry, and application secrets, then
+use `azure-pipelines-be.yml` and `azure-pipelines-fe.yml` to build and deploy.
 
 ## Layout
 ```
 app/
   api/         FastAPI app, routers, schemas
-  agents/      LangGraph nodes, tools, state, guardrails
-  workflows/   Temporal workflows + activities
-  workers/     Temporal worker entrypoint
-  config/      YAML prompts, rules, temporal dynamic-config
+  agents/      GridSync Agent tools and policy
+  config/      application configuration
   db/          SQLAlchemy models + async engine (+ alembic/)
-  observability/  OTel + Phoenix tracing
-  security/    Key Vault + auth
-  shared/      config, llm, logger, prompt loader
+  shared/      config, llm, logger
   ui/          React + Vite + Tailwind + nginx
-infra/         aca-setup.sh
 ```
 """
 
@@ -186,9 +168,6 @@ def main() -> int:
     p.add_argument("--desc", help="One-line description")
     p.add_argument("--backend-port", type=int, default=8000)
     p.add_argument("--frontend-port", type=int, default=3000)
-    p.add_argument("--namespace", help="Temporal namespace (default: app name)")
-    p.add_argument("--task-queue", help="Temporal task queue (default: <name>-agents)")
-    p.add_argument("--db-name", help="Postgres DB name (default: snake_case name)")
     p.add_argument("--git-init", action="store_true", help="git init + initial commit")
     p.add_argument("--remote", help="git remote URL (implies --git-init)")
     p.add_argument("--force", action="store_true", help="overwrite dest if it exists")
@@ -219,9 +198,8 @@ def main() -> int:
         git_init(dest, args.remote)
 
     print("\nNext:")
-    print(f"  cd {dest}/app && cp .env.example .env  # add Azure OpenAI creds")
-    print("  docker compose -f ../docker-compose.local.yml up -d")
-    print(f"  pip install -r requirements.txt && alembic upgrade head")
+    print(f"  cd {dest}/app && cp .env.example .env  # add a Groq API key")
+    print(f"  pip install -r requirements.txt")
     print(f"  uvicorn api.main:app --reload --port {repl['__BACKEND_PORT__']}")
     return 0
 

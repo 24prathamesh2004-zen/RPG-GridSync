@@ -4,7 +4,6 @@ GridSync uses:
   - SQLite (no PostgreSQL)
   - In-process dict cache (no Redis)
   - Groq LLM API
-  - Tavily web search API (optional)
   - Open-Meteo weather (no key)
   - IEX India public market data (no key)
 """
@@ -39,19 +38,12 @@ class Settings(BaseSettings):
     # ── Market data backup ────────────────────────────────────────────────────
     energymap_api_key: str = ""
 
-    # ── Web Search — Tavily ────────────────────────────────────────────────────
-    tavily_api_key: str = ""
-
     # ── GridSync domain settings ───────────────────────────────────────────────
-    gridsync_default_timezone: str = "Asia/Kolkata"
     gridsync_weight_price: float = 0.50
     gridsync_weight_carbon: float = 0.30
     gridsync_weight_captive: float = 0.20
     daily_recommendation_enabled: bool = True
     daily_recommendation_time: str = "06:30"
-
-    # ── Prompts ────────────────────────────────────────────────────────────────
-    prompts_dir: str = "config/prompts"
 
     # ── Security validators ────────────────────────────────────────────────────
     @model_validator(mode="after")

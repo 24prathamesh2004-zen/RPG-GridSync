@@ -1,13 +1,12 @@
-.PHONY: help install dev worker migrate revision test lint compose-up compose-down
+.PHONY: help install dev migrate revision test compose-up compose-down
 
 help:
 	@echo "install       Create venv and install requirements"
 	@echo "dev           Run FastAPI with reload (port __BACKEND_PORT__)"
-	@echo "worker        Run the Temporal worker"
 	@echo "migrate       Apply DB migrations (alembic upgrade head)"
 	@echo "revision      Autogenerate a migration (m='message')"
-	@echo "test          Run pytest"
-	@echo "compose-up    Start full local stack (postgres, redis, temporal, phoenix)"
+	@echo "test          Run unittest suite"
+	@echo "compose-up    Start API and UI containers"
 	@echo "compose-down  Stop local stack"
 
 install:
@@ -16,9 +15,6 @@ install:
 dev:
 	uvicorn api.main:app --reload --host 0.0.0.0 --port __BACKEND_PORT__
 
-worker:
-	python -m workers.worker
-
 migrate:
 	alembic upgrade head
 
@@ -26,7 +22,7 @@ revision:
 	alembic revision --autogenerate -m "$(m)"
 
 test:
-	pytest -q
+	python -m unittest discover -s tests -q
 
 compose-up:
 	docker compose up -d --build

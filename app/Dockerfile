@@ -34,6 +34,4 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
     CMD curl -f http://localhost:__BACKEND_PORT__/health || exit 1
 
 # ---------- Start FastAPI ----------
-# The Temporal worker uses the same image with a command override:
-#   python -m workers.worker
 CMD ["uvicorn", "api.main:app", "--host", "0.0.0.0", "--port", "__BACKEND_PORT__"]
