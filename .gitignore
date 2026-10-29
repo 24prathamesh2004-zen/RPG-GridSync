@@ -1,4 +1,4 @@
-# ── Python ───────────────────────────────────────────────────────────────────
+# ── Python ─────────────────────────────────────────────────────────────
 __pycache__/
 *.py[cod]
 *.egg-info/
@@ -9,7 +9,7 @@ __pycache__/
 .coverage
 htmlcov/
 
-# ── Virtualenvs (never commit these) ─────────────────────────────────────────
+# ── Virtualenvs (never commit these) ─────────────────────────────────────
 .venv/
 venv/
 env/
